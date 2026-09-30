@@ -41,10 +41,12 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
 
 ---
 
-## 📡 Dokumentasi & Contoh Endpoints REST API
+## 📡 Dokumentasi Endpoints REST API (GET, POST, PUT, DELETE)
 
-### 1. Server Health Check
-- **Endpoint**: `GET /`
+### 🔵 1. Method GET
+
+#### A. Server Health Check
+- **URL**: `GET /`
 - **Contoh Respon (200 OK)**:
   ```json
   {
@@ -53,11 +55,8 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
   }
   ```
 
----
-
-### 2. Mengambil Data Status Pintu Air
-- **Endpoint**: `GET /api/pintu-irigasi`
-- **Deskripsi**: Mengambil status ketinggian air dan persentase bukaan pintu irigasi saat ini.
+#### B. Mengambil Data Status Pintu Air
+- **URL**: `GET /api/pintu-irigasi`
 - **Contoh Respon (200 OK)**:
   ```json
   {
@@ -69,12 +68,27 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
         "kode_pintu": "PINTU-UTAMA-01",
         "ketinggian_air": 1.2,
         "persen_buka": 25
-      },
+      }
+    ]
+  }
+  ```
+
+#### C. Mengambil Daftar Rekomendasi Aktif
+- **URL**: `GET /api/rekomendasi`
+- **Contoh Respon (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "message": "Berhasil mengambil daftar rekomendasi sistem",
+    "data": [
       {
-        "id_pintu": 2,
-        "kode_pintu": "PINTU-PEMBUANG-02",
-        "ketinggian_air": 2.5,
-        "persen_buka": 50
+        "id_rekomendasi": 1,
+        "saran_persen_buka": 75,
+        "status_respon": "MENUNGGU",
+        "intensitas_hujan": 35.5,
+        "waktu_rekam": "2026-09-30T22:15:00.000Z",
+        "lokasi_stasiun": "Stasiun Bendung Hulu A",
+        "kode_pintu": "PINTU-UTAMA-01"
       }
     ]
   }
@@ -82,10 +96,11 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
 
 ---
 
-### 3. Menerima Data Telemetri Curah Hujan
-- **Endpoint**: `POST /api/telemetri`
-- **Content-Type**: `application/json`
-- **Contoh Request Body**:
+### 🟢 2. Method POST
+
+#### A. Menerima Data Telemetri Curah Hujan
+- **URL**: `POST /api/telemetri`
+- **Request Body (JSON)**:
   ```json
   {
     "id_stasiun": 1,
@@ -93,7 +108,6 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
     "id_pintu": 1
   }
   ```
-- **Deskripsi**: Mencatat data curah hujan. Jika `intensitas_hujan > 20 mm/jam`, sistem **otomatis** membuat rekomendasi bukaan pintu air dengan status `MENUNGGU`.
 - **Contoh Respon (201 Created)**:
   ```json
   {
@@ -114,38 +128,9 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
   }
   ```
 
----
-
-### 4. Mengambil Daftar Rekomendasi Aktif
-- **Endpoint**: `GET /api/rekomendasi`
-- **Deskripsi**: Mengambil daftar rekomendasi sistem beserta detail stasiun hujan dan pintu irigasi terkait.
-- **Contoh Respon (200 OK)**:
-  ```json
-  {
-    "status": "success",
-    "message": "Berhasil mengambil daftar rekomendasi sistem",
-    "data": [
-      {
-        "id_rekomendasi": 2,
-        "saran_persen_buka": 75,
-        "status_respon": "MENUNGGU",
-        "intensitas_hujan": 35.5,
-        "waktu_rekam": "2026-09-30T22:15:00.000Z",
-        "lokasi_stasiun": "Stasiun Bendung Hulu A",
-        "kode_pintu": "PINTU-UTAMA-01",
-        "ketinggian_air": 1.2,
-        "persen_buka_saat_ini": 25
-      }
-    ]
-  }
-  ```
-
----
-
-### 5. Eksekusi Kendali Pintu Air oleh Petugas
-- **Endpoint**: `POST /api/kendali-pintu`
-- **Content-Type**: `application/json`
-- **Contoh Request Body**:
+#### B. Eksekusi Kendali Pintu Air oleh Petugas
+- **URL**: `POST /api/kendali-pintu`
+- **Request Body (JSON)**:
   ```json
   {
     "id_pintu": 1,
@@ -154,7 +139,6 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
     "id_rekomendasi": 2
   }
   ```
-- **Deskripsi**: Mengubah persentase bukaan pintu di `pintu_irigasi`, mencatat riwayat eksekusi di `log_kendali_pintu`, dan mengupdate status rekomendasi terkait menjadi `DILAKSANAKAN`.
 - **Contoh Respon (200 OK)**:
   ```json
   {
@@ -167,5 +151,76 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
       "target_buka_baru": 75,
       "status_eksekusi": "BERHASIL"
     }
+  }
+  ```
+
+---
+
+### 🟡 3. Method PUT
+
+#### A. Memperbarui Data Pintu Irigasi
+- **URL**: `PUT /api/pintu-irigasi/:id`
+- **Request Body (JSON)**:
+  ```json
+  {
+    "ketinggian_air": 2.8,
+    "persen_buka": 80
+  }
+  ```
+- **Contoh Respon (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "message": "Berhasil memperbarui data pintu irigasi",
+    "data": {
+      "id_pintu": 1,
+      "kode_pintu": "PINTU-UTAMA-01",
+      "ketinggian_air": 2.8,
+      "persen_buka": 80
+    }
+  }
+  ```
+
+#### B. Memperbarui Status Rekomendasi
+- **URL**: `PUT /api/rekomendasi/:id`
+- **Request Body (JSON)**:
+  ```json
+  {
+    "status_respon": "DITOLAK"
+  }
+  ```
+- **Contoh Respon (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "message": "Berhasil memperbarui status rekomendasi",
+    "data": {
+      "id_rekomendasi": 1,
+      "status_respon_baru": "DITOLAK"
+    }
+  }
+  ```
+
+---
+
+### 🔴 4. Method DELETE
+
+#### A. Menghapus Data Pintu Irigasi
+- **URL**: `DELETE /api/pintu-irigasi/:id`
+- **Contoh Respon (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "message": "Pintu irigasi dengan ID 1 berhasil dihapus"
+  }
+  ```
+
+#### B. Menghapus Rekomendasi Sistem
+- **URL**: `DELETE /api/rekomendasi/:id`
+- **Contoh Respon (200 OK)**:
+  ```json
+  {
+    "status": "success",
+    "message": "Rekomendasi dengan ID 1 berhasil dihapus"
   }
   ```

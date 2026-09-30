@@ -211,6 +211,160 @@ app.post('/api/kendali-pintu', async (req, res) => {
     }
 });
 
+/**
+ * 5. PUT /api/pintu-irigasi/:id
+ * Memperbarui data pintu irigasi (ketinggian_air / persen_buka / kode_pintu).
+ */
+app.put('/api/pintu-irigasi/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { ketinggian_air, persen_buka, kode_pintu } = req.body;
+
+        const [existing] = await db.query('SELECT * FROM pintu_irigasi WHERE id_pintu = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({
+                status: 'fail',
+                message: `Pintu irigasi dengan ID ${id} tidak ditemukan`
+            });
+        }
+
+        const updatedKetinggian = ketinggian_air !== undefined ? ketinggian_air : existing[0].ketinggian_air;
+        const updatedPersen = persen_buka !== undefined ? persen_buka : existing[0].persen_buka;
+        const updatedKode = kode_pintu || existing[0].kode_pintu;
+
+        await db.query(
+            'UPDATE pintu_irigasi SET ketinggian_air = ?, persen_buka = ?, kode_pintu = ? WHERE id_pintu = ?',
+            [updatedKetinggian, updatedPersen, updatedKode, id]
+        );
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Berhasil memperbarui data pintu irigasi',
+            data: {
+                id_pintu: parseInt(id),
+                kode_pintu: updatedKode,
+                ketinggian_air: updatedKetinggian,
+                persen_buka: updatedPersen
+            }
+        });
+    } catch (error) {
+        console.error('Error PUT /api/pintu-irigasi/:id:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Gagal memperbarui data pintu irigasi',
+            error: error.message
+        });
+    }
+});
+
+/**
+ * 6. DELETE /api/pintu-irigasi/:id
+ * Menghapus data pintu irigasi berdasarkan ID.
+ */
+app.delete('/api/pintu-irigasi/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [existing] = await db.query('SELECT * FROM pintu_irigasi WHERE id_pintu = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({
+                status: 'fail',
+                message: `Pintu irigasi dengan ID ${id} tidak ditemukan`
+            });
+        }
+
+        await db.query('DELETE FROM pintu_irigasi WHERE id_pintu = ?', [id]);
+
+        res.status(200).json({
+            status: 'success',
+            message: `Pintu irigasi dengan ID ${id} berhasil dihapus`
+        });
+    } catch (error) {
+        console.error('Error DELETE /api/pintu-irigasi/:id:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Gagal menghapus pintu irigasi',
+            error: error.message
+        });
+    }
+});
+
+/**
+ * 7. PUT /api/rekomendasi/:id
+ * Memperbarui status rekomendasi (MENUNGGU / DILAKSANAKAN / DITOLAK).
+ */
+app.put('/api/rekomendasi/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status_respon } = req.body;
+
+        if (!['MENUNGGU', 'DILAKSANAKAN', 'DITOLAK'].includes(status_respon)) {
+            return res.status(400).json({
+                status: 'fail',
+                message: 'status_respon harus salah satu dari: MENUNGGU, DILAKSANAKAN, DITOLAK'
+            });
+        }
+
+        const [existing] = await db.query('SELECT * FROM rekomendasi_sistem WHERE id_rekomendasi = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({
+                status: 'fail',
+                message: `Rekomendasi dengan ID ${id} tidak ditemukan`
+            });
+        }
+
+        await db.query('UPDATE rekomendasi_sistem SET status_respon = ? WHERE id_rekomendasi = ?', [status_respon, id]);
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Berhasil memperbarui status rekomendasi',
+            data: {
+                id_rekomendasi: parseInt(id),
+                status_respon_baru: status_respon
+            }
+        });
+    } catch (error) {
+        console.error('Error PUT /api/rekomendasi/:id:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Gagal memperbarui status rekomendasi',
+            error: error.message
+        });
+    }
+});
+
+/**
+ * 8. DELETE /api/rekomendasi/:id
+ * Menghapus rekomendasi sistem berdasarkan ID.
+ */
+app.delete('/api/rekomendasi/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [existing] = await db.query('SELECT * FROM rekomendasi_sistem WHERE id_rekomendasi = ?', [id]);
+        if (existing.length === 0) {
+            return res.status(404).json({
+                status: 'fail',
+                message: `Rekomendasi dengan ID ${id} tidak ditemukan`
+            });
+        }
+
+        await db.query('DELETE FROM rekomendasi_sistem WHERE id_rekomendasi = ?', [id]);
+
+        res.status(200).json({
+            status: 'success',
+            message: `Rekomendasi dengan ID ${id} berhasil dihapus`
+        });
+    } catch (error) {
+        console.error('Error DELETE /api/rekomendasi/:id:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Gagal menghapus rekomendasi',
+            error: error.message
+        });
+    }
+});
+
 // Middleware Endpoint 404 (Not Found)
 app.use((req, res) => {
     res.status(404).json({
