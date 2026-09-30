@@ -1,10 +1,11 @@
 # Sistem Monitoring & Kendali Otomatis Pintu Irigasi Terintegrasi Stasiun Curah Hujan (Dinas SDA)
 
-Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pintu Air Irigasi Otomatis (Tugas Pertemuan 7 - Web Service).
+Project REST API Web Service v1.0.0 untuk Sistem Monitoring Curah Hujan dan Kendali Pintu Air Irigasi Otomatis (Tugas Pertemuan 7 - Web Service).
 
 ---
 
-## 🚀 Tech Stack
+## 🚀 Tech Stack & Versioning
+- **API Version**: `v1.0.0` (Prefix URL: `/api/v1/` & `/api/`)
 - **Node.js** & **Express.js**
 - **MySQL Database**
 - **dotenv** & **mysql2**
@@ -41,22 +42,24 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
 
 ---
 
-## 📡 Dokumentasi Endpoints REST API (GET, POST, PUT, DELETE)
+## 📡 Dokumentasi Endpoints REST API (v1.0.0)
 
 ### 🔵 1. Method GET
 
-#### A. Server Health Check
+#### A. Server Health Check & Version Info
 - **URL**: `GET /`
 - **Contoh Respon (200 OK)**:
   ```json
   {
     "status": "success",
-    "message": "REST API Sistem Monitoring & Kendali Otomatis Pintu Irigasi (Dinas SDA) Berjalan!"
+    "version": "1.0.0",
+    "api_prefix": "/api/v1",
+    "message": "REST API v1.0.0 Sistem Monitoring & Kendali Otomatis Pintu Irigasi (Dinas SDA) Berjalan!"
   }
   ```
 
 #### B. Mengambil Data Status Pintu Air
-- **URL**: `GET /api/pintu-irigasi`
+- **URL**: `GET /api/v1/pintu-irigasi` (atau `/api/pintu-irigasi`)
 - **Contoh Respon (200 OK)**:
   ```json
   {
@@ -74,7 +77,7 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
   ```
 
 #### C. Mengambil Daftar Rekomendasi Aktif
-- **URL**: `GET /api/rekomendasi`
+- **URL**: `GET /api/v1/rekomendasi` (atau `/api/rekomendasi`)
 - **Contoh Respon (200 OK)**:
   ```json
   {
@@ -99,7 +102,7 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
 ### 🟢 2. Method POST
 
 #### A. Menerima Data Telemetri Curah Hujan
-- **URL**: `POST /api/telemetri`
+- **URL**: `POST /api/v1/telemetri` (atau `/api/telemetri`)
 - **Request Body (JSON)**:
   ```json
   {
@@ -129,7 +132,7 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
   ```
 
 #### B. Eksekusi Kendali Pintu Air oleh Petugas
-- **URL**: `POST /api/kendali-pintu`
+- **URL**: `POST /api/v1/kendali-pintu` (atau `/api/kendali-pintu`)
 - **Request Body (JSON)**:
   ```json
   {
@@ -159,7 +162,7 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
 ### 🟡 3. Method PUT
 
 #### A. Memperbarui Data Pintu Irigasi
-- **URL**: `PUT /api/pintu-irigasi/:id`
+- **URL**: `PUT /api/v1/pintu-irigasi/:id` (atau `/api/pintu-irigasi/:id`)
 - **Request Body (JSON)**:
   ```json
   {
@@ -182,7 +185,7 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
   ```
 
 #### B. Memperbarui Status Rekomendasi
-- **URL**: `PUT /api/rekomendasi/:id`
+- **URL**: `PUT /api/v1/rekomendasi/:id` (atau `/api/rekomendasi/:id`)
 - **Request Body (JSON)**:
   ```json
   {
@@ -206,7 +209,7 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
 ### 🔴 4. Method DELETE
 
 #### A. Menghapus Data Pintu Irigasi
-- **URL**: `DELETE /api/pintu-irigasi/:id`
+- **URL**: `DELETE /api/v1/pintu-irigasi/:id` (atau `/api/pintu-irigasi/:id`)
 - **Contoh Respon (200 OK)**:
   ```json
   {
@@ -216,7 +219,7 @@ Project REST API Web Service untuk Sistem Monitoring Curah Hujan dan Kendali Pin
   ```
 
 #### B. Menghapus Rekomendasi Sistem
-- **URL**: `DELETE /api/rekomendasi/:id`
+- **URL**: `DELETE /api/v1/rekomendasi/:id` (atau `/api/rekomendasi/:id`)
 - **Contoh Respon (200 OK)**:
   ```json
   {

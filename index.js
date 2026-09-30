@@ -9,19 +9,23 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const API_VERSION = 'v1';
+
 // Root Route
 app.get('/', (req, res) => {
     res.json({
         status: 'success',
-        message: 'REST API Sistem Monitoring & Kendali Otomatis Pintu Irigasi (Dinas SDA) Berjalan!'
+        version: '1.0.0',
+        api_prefix: `/api/${API_VERSION}`,
+        message: 'REST API v1.0.0 Sistem Monitoring & Kendali Otomatis Pintu Irigasi (Dinas SDA) Berjalan!'
     });
 });
 
 /**
- * 1. GET /api/pintu-irigasi
+ * 1. GET /api/v1/pintu-irigasi & /api/pintu-irigasi
  * Mengambil status dan data seluruh pintu air.
  */
-app.get('/api/pintu-irigasi', async (req, res) => {
+app.get(['/api/v1/pintu-irigasi', '/api/pintu-irigasi'], async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM pintu_irigasi');
         res.status(200).json({
@@ -44,7 +48,7 @@ app.get('/api/pintu-irigasi', async (req, res) => {
  * Menerima data sensor hulu (curah hujan), evaluasi ambang batas (> 20 mm/jam), 
  * dan otomatis buat rekomendasi bukaan pintu jika hujan lebat.
  */
-app.post('/api/telemetri', async (req, res) => {
+app.post(['/api/v1/telemetri', '/api/telemetri'], async (req, res) => {
     try {
         const { id_stasiun, intensitas_hujan, id_pintu } = req.body;
 
@@ -117,7 +121,7 @@ app.post('/api/telemetri', async (req, res) => {
  * 3. GET /api/rekomendasi
  * Mengambil daftar rekomendasi aktif untuk aplikasi mobile / petugas.
  */
-app.get('/api/rekomendasi', async (req, res) => {
+app.get(['/api/v1/rekomendasi', '/api/rekomendasi'], async (req, res) => {
     try {
         const query = `
             SELECT 
@@ -157,7 +161,7 @@ app.get('/api/rekomendasi', async (req, res) => {
  * 4. POST /api/kendali-pintu
  * Menerima aksi eksekusi dari petugas untuk mengubah persentase bukaan pintu air.
  */
-app.post('/api/kendali-pintu', async (req, res) => {
+app.post(['/api/v1/kendali-pintu', '/api/kendali-pintu'], async (req, res) => {
     try {
         const { id_pintu, id_pengguna, target_buka, id_rekomendasi } = req.body;
 
@@ -215,7 +219,7 @@ app.post('/api/kendali-pintu', async (req, res) => {
  * 5. PUT /api/pintu-irigasi/:id
  * Memperbarui data pintu irigasi (ketinggian_air / persen_buka / kode_pintu).
  */
-app.put('/api/pintu-irigasi/:id', async (req, res) => {
+app.put(['/api/v1/pintu-irigasi/:id', '/api/pintu-irigasi/:id'], async (req, res) => {
     try {
         const { id } = req.params;
         const { ketinggian_air, persen_buka, kode_pintu } = req.body;
@@ -261,7 +265,7 @@ app.put('/api/pintu-irigasi/:id', async (req, res) => {
  * 6. DELETE /api/pintu-irigasi/:id
  * Menghapus data pintu irigasi berdasarkan ID.
  */
-app.delete('/api/pintu-irigasi/:id', async (req, res) => {
+app.delete(['/api/v1/pintu-irigasi/:id', '/api/pintu-irigasi/:id'], async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -293,7 +297,7 @@ app.delete('/api/pintu-irigasi/:id', async (req, res) => {
  * 7. PUT /api/rekomendasi/:id
  * Memperbarui status rekomendasi (MENUNGGU / DILAKSANAKAN / DITOLAK).
  */
-app.put('/api/rekomendasi/:id', async (req, res) => {
+app.put(['/api/v1/rekomendasi/:id', '/api/rekomendasi/:id'], async (req, res) => {
     try {
         const { id } = req.params;
         const { status_respon } = req.body;
@@ -337,7 +341,7 @@ app.put('/api/rekomendasi/:id', async (req, res) => {
  * 8. DELETE /api/rekomendasi/:id
  * Menghapus rekomendasi sistem berdasarkan ID.
  */
-app.delete('/api/rekomendasi/:id', async (req, res) => {
+app.delete(['/api/v1/rekomendasi/:id', '/api/rekomendasi/:id'], async (req, res) => {
     try {
         const { id } = req.params;
 
